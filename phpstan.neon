@@ -1,0 +1,10 @@
+parameters:
+	level: 5
+	paths:
+		- src/App
+	excludePaths:
+		- src/App/tmp
+		- src/vendor
+		- src/tests
+	# scanFiles:
+	# 	- src/git-destroyer

@@ -1,0 +1,129 @@
+#! /usr/bin/php
+<?php
+if (php_sapi_name() !== 'cli') {
+    exit;
+}
+
+require_once __DIR__ . '/vendor/autoload.php';
+
+use Clyde\Application;
+use Clyde\Args\Arg_Flag;
+use Clyde\Commands\Command;
+use Clyde\Tools\Emoji;
+use Git_Destroyer\Actions\Init_Action;
+use Git_Destroyer\Actions\New_Branch_Action;
+use Git_Destroyer\Actions\Script_Action;
+use Clyde\Args\Arg_Option;
+use Git_Destroyer\Actions\Clone_Action;
+use Git_Destroyer\Actions\Commit_Action;
+use Git_Destroyer\Actions\Push_Action;
+use Git_Destroyer\Actions\Switch_Branch_Action;
+
+define('ROOT', getcwd());
+define('APP_ROOT', __DIR__);
+
+Application::create('git-destroyer')
+	->author(Emoji::ALIEN_MONSTER . ' dvnc0')
+	->website(Emoji::COMPASS . ' https://github.com/dvnc0/git-destroyer')
+	->about('Git Destroyer is a CLI git repository manager')
+	->version(Emoji::GREEN_BOX_WITH_CHECKMARK . ' v1.0.0')
+	->helpTemplate(APP_ROOT . '/App/templates/help.txt')
+	->command(
+		Command::create('init')
+			->about('Initialize a project')
+			->action(Init_Action::class)
+			->save()
+	)
+	->command(
+		Command::create('clone')
+			->about("Clone the remote repository")
+			->action(Clone_Action::class)
+			->arg(
+				Arg_Option::create('path')
+					->shortName('p')
+					->longName('path')
+					->required(FALSE)
+					->defaultValue('.')
+					->help('The path to clone the repository to')
+					->save()
+			)
+			->save()
+	)
+	->command(
+		Command::create('new-branch')
+			->about('Create a new branch')
+			->action(New_Branch_Action::class)
+			->arg(
+				Arg_Option::create('branch_name')
+					->shortName('n')
+					->longName('branch_name')
+					->required(TRUE)
+					->help('The branch name to create')
+					->save()
+
+			)
+			->save()
+	)
+	->command(
+		Command::create('update')
+			->about('Switch to a new branch')
+			->action(Switch_Branch_Action::class)
+			->arg(
+				Arg_Option::create('branch_name')
+					->shortName('n')
+					->longName('branch_name')
+					->required(TRUE)
+					->help('The branch to switch to')
+					->save()
+			)
+			->save()
+	)
+	->command(
+		Command::create('commit <message>')
+			->about('Commit your changes')
+			->action(Commit_Action::class)
+			->arg(
+				Arg_Flag::create('add_all')
+					->help('Add all files to the commit')
+					->shortName('a')
+					->longName('add-all')
+					->required(FALSE)
+					->defaultValue(FALSE)
+					->setTo(TRUE)
+					->save()
+			)
+			->arg(
+				Arg_Option::create('files')
+					->shortName('f')
+					->longName('files')
+					->required(FALSE)
+					->defaultValue('')
+					->help('CSV string of files to add to the commit')
+					->save()
+			)
+			->arg(
+				Arg_Flag::create('local_only')
+					->shortName('l')
+					->longName('local-only')
+					->required(FALSE)
+					->defaultValue(FALSE)
+					->setTo(TRUE)
+					->help('Only commit locally, do not push')
+					->save()
+			)
+			->save()
+	)
+	->command(
+		Command::create('push')
+			->about('Push your changes to the remote')
+			->action(Push_Action::class)
+			->save()
+	)
+	->command(
+		Command::create('script <name>')
+			->about('Run a script from the config')
+			->subscribe('run:script') // pass [name => script] as data
+			->action(Script_Action::class)
+			->save()
+	)
+	->run();

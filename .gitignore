@@ -1,0 +1,4 @@
+.gitconfig
+composer.lock
+vendor
+git-destroyer-config.json
