@@ -1,21 +1,18 @@
 <?php
 namespace Git_Destroyer\Actions;
 
-use Clyde\Actions\Action_Base;
+use Git_Destroyer\Actions\Action_Extender;
 use Clyde\Request\Request_Response;
 use Clyde\Request\Request;
 use Exception;
 
-class Switch_Branch_Action extends Action_Base {
-	use Action_Trait;
+class Switch_Branch_Action extends Action_Extender {
 
-	public function execute(Request $request): Request_Response {
-		$Git = $this->getGitInstance();
+	public function execute(Request $Request): Request_Response {
+		$this->checkForUncommittedChanges();
+		$this->checkForUntrackedFiles();
 
-		$this->checkForUncommittedChanges($Git);
-		$this->checkForUntrackedFiles($Git);
-
-		$branch_name = $request->getArgument('branch_name');
+		$branch_name = $Request->getArgument('branch_name');
 
 		$cmd = "git checkout $branch_name";
 		$result = [];

@@ -2,29 +2,27 @@
 
 namespace Git_Destroyer\Actions;
 
-use Clyde\Actions\Action_Base;
 use Clyde\Request\Request_Response;
 use Clyde\Request\Request;
-use Clyde\Tools\Emoji;
-use Clyde\Tools\Input;
-use Git_Destroyer\Utils\Git;
-use Git_Destroyer\Utils\Config;
-use Exception;
+use Git_Destroyer\Actions\Action_Extender;
+use Git_Destroyer\Tasks\Clone_Task;
 
 /**
  * @phpstan-import-type ConfigType from Config
  */
-class Clone_Action extends Action_Base {
-	use Action_Trait;
+class Clone_Action extends Action_Extender {
+
+	protected function getTask(): Clone_Task {
+		return new Clone_Task($this->Application);
+	}
 
 	public function execute(Request $Request): Request_Response {
-		$config = $this->getConfig();
-		$Git = $this->getGitInstance();
-
-		$clone_url = $config['repo_url'];
-
-		$this->Printer->success("Cloning repo...");
-		$Git->cloneRepo($clone_url, $Request->getArgument('path'));
+		$Runner = $this->getTaskRunner();
+		$Task = $this->getTask();
+		$Task->task_config = [
+			'path' => $Request->getArgument('path')
+		];
+		$Runner->run($Task);
 
 		return new Request_Response(true, "Cloned repository");
 	}

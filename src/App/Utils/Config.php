@@ -32,15 +32,15 @@ class Config {
 	 * load config from file
 	 *
 	 * @param non-empty-string $file_path
-	 * @return ConfigType
+	 * @return ConfigType|false
 	 */
-	public function loadConfigFromFile(string $file_path): array {
+	public function loadConfigFromFile(string $file_path): array|bool {
 		if (empty($file_path)) {
 			throw new Exception("File path cannot be empty");
 		}
 
 		if (!file_exists($file_path)) {
-			throw new Exception("Config file does not exist, please run git-destroyer init");
+			return false;
 		}
 
 		$config = json_decode(file_get_contents($file_path), true);

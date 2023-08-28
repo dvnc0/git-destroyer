@@ -1,13 +1,11 @@
 <?php
 namespace Git_Destroyer\Actions;
 
-use Clyde\Actions\Action_Base;
+use Git_Destroyer\Actions\Action_Extender;
 use Clyde\Request\Request_Response;
 use Clyde\Request\Request;
-use Clyde\Tools\Input;
-use Clyde\Tools\Printer;
 
-class Init_Action extends Action_Base {
+class Init_Action extends Action_Extender {
 	/**
 	 * creates the config file
 	 *
@@ -15,20 +13,17 @@ class Init_Action extends Action_Base {
 	 * @return Request_Response
 	 */
 	public function execute(Request $Request): Request_Response {
-		// execute init
-		$Printer = new Printer;
-		$Input = new Input($Printer);
 
-		$user_name = $Input->get('What is your git username?');
-		$email = $Input->get('What is the email you use for git?');
-		$repo = $Input->get('What is the repository clone URL? ex: ssh://user@github.com/user/foo');
-		$has_staging = $Input->list('Does your repository have a staging or testing branch?', ['Yes', 'No']);
-		$staging_branch = $has_staging[0] === 'Yes' ? $Input->get('What is your staging branch') : '';
-		$has_live = $Input->list('Does your repository have a live or production branch?', ['Yes', 'No']);
-		$live_branch = $has_live[0] === 'Yes' ? $Input->get('What is your production branch') : '';
-		$has_prefix = $Input->list("Do you use branch prefixes? ex ABC-[TICKET NUMBER]", ['Yes', 'No']);
-		$branch_prefix = $has_prefix[0] === 'Yes' ? $Input->get('What is your branch prefix?') : '';
-		$new_branch = $Input->get("What branch should new branches be made from?");
+		$user_name = $this->Input->get('What is your git username?');
+		$email = $this->Input->get('What is the email you use for git?');
+		$repo = $this->Input->get('What is the repository clone URL? ex: ssh://user@github.com/user/foo');
+		$has_staging = $this->Input->list('Does your repository have a staging or testing branch?', ['Yes', 'No']);
+		$staging_branch = $has_staging[0] === 'Yes' ? $this->Input->get('What is your staging branch') : '';
+		$has_live = $this->Input->list('Does your repository have a live or production branch?', ['Yes', 'No']);
+		$live_branch = $has_live[0] === 'Yes' ? $this->Input->get('What is your production branch') : '';
+		$has_prefix = $this->Input->list("Do you use branch prefixes? ex ABC-[TICKET NUMBER]", ['Yes', 'No']);
+		$branch_prefix = $has_prefix[0] === 'Yes' ? $this->Input->get('What is your branch prefix?') : '';
+		$new_branch = $this->Input->get("What branch should new branches be made from?");
 
 		$config_file = [
 			'user_name' => $user_name,
@@ -64,7 +59,7 @@ class Init_Action extends Action_Base {
 			]
 		];
 
-		$Printer->success("Creating config file...");
+		$this->Printer->success("Creating config file...");
 		$file_name = ROOT . '/git-destroyer-config.json';
 		file_put_contents($file_name, json_encode($config_file, JSON_PRETTY_PRINT));
 		

@@ -1,20 +1,14 @@
 <?php
 namespace Git_Destroyer\Actions;
 
-use Clyde\Actions\Action_Base;
+use Git_Destroyer\Actions\Action_Extender;
 use Clyde\Request\Request_Response;
 use Clyde\Request\Request;
-use Clyde\Tools\Emoji;
-use Clyde\Tools\Input;
-use Git_Destroyer\Utils\Git;
-use Git_Destroyer\Utils\Config;
 
 /**
  * @phpstan-import-type ConfigType from Config
  */
-class New_Branch_Action extends Action_Base {
-
-	use Action_Trait;
+class New_Branch_Action extends Action_Extender {
 
 	/**
 	 * creates the config file
@@ -23,18 +17,16 @@ class New_Branch_Action extends Action_Base {
 	 * @return Request_Response
 	 */
 	public function execute(Request $Request): Request_Response {
-		$Git = $this->getGitInstance();
-		$config = $this->getConfig();
 		
 		$this->Printer->success("Checking for uncommitted changes...");
-		$this->checkForUncommittedChanges($Git);
+		$this->checkForUncommittedChanges();
 		
 		$this->Printer->success("Checking for untracked files...");
-		$this->checkForUntrackedFiles($Git);
+		$this->checkForUntrackedFiles();
 
 		$this->Printer->success("Running hooks...");
-		$pre_hooks = $config['hooks']['new_branch']['pre'];
-		$post_hooks = $config['hooks']['new_branch']['post'];
+		$pre_hooks = $this->config['hooks']['new_branch']['pre'];
+		$post_hooks = $this->config['hooks']['new_branch']['post'];
 
 		foreach ($pre_hooks as $hook) {
 			$this->Printer->message("Running pre hook: " . $hook);
@@ -43,7 +35,7 @@ class New_Branch_Action extends Action_Base {
 
 		$this->Printer->success("Creating new branch...");
 		$branch_name = $Request->getArgument('branch_name');
-		$Git->createNewBranch($branch_name);
+		$this->Git->createNewBranch($branch_name);
 		$this->Printer->success("New branch created!");
 
 		$this->Printer->success("Running hooks...");
