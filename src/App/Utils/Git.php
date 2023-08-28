@@ -25,9 +25,7 @@ class Git {
 	 */
 	public function hasUntrackedFiles(): bool {
 		$cmd = "git ls-files --others --exclude-standard";
-		$result = [];
-		$result_code = 0;
-		exec($cmd, $result, $result_code);
+		[$result, $result_code] = $this->execWrapper($cmd);
 
 		if ($result_code !== 0) {
 			throw new Exception("There was an error listing untracked files");
@@ -38,18 +36,14 @@ class Git {
 
 	public function getUntrackedFiles(): array {
 		$cmd = "git ls-files --others --exclude-standard";
-		$result = [];
-		$result_code = 0;
-		exec($cmd, $result, $result_code);
+		[$result, $result_code] = $this->execWrapper($cmd);
 
 		return $result;
 	}
 
 	public function hasUncommittedChanges(): bool {
 		$cmd = "git diff --name-only";
-		$result = [];
-		$result_code = 0;
-		exec($cmd, $result, $result_code);
+		[$result, $result_code] = $this->execWrapper($cmd);
 
 		if ($result_code !== 0) {
 			throw new Exception("There was an error listing uncommitted changes");
@@ -78,9 +72,7 @@ class Git {
 		
 		$cmd = "git fetch --all && git checkout $master_branch && git pull origin $master_branch  && git checkout -b $branch_name";
 
-		$result = [];
-		$result_code = 0;
-		exec($cmd, $result, $result_code);
+		[$result, $result_code] = $this->execWrapper($cmd);
 
 		if ($result_code !== 0) {
 			throw new Exception("There was an error creating the new branch");
@@ -91,9 +83,7 @@ class Git {
 
 	public function addAllFiles(): bool {
 		$cmd = "git add .";
-		$result = [];
-		$result_code = 0;
-		exec($cmd, $result, $result_code);
+		[$result, $result_code] = $this->execWrapper($cmd);
 
 		if ($result_code !== 0) {
 			throw new Exception("There was an error adding all files");
@@ -118,9 +108,7 @@ class Git {
 
 	public function commit(string $commit_message): bool {
 		$cmd = "git commit -m \"$commit_message\"";
-		$result = [];
-		$result_code = 0;
-		exec($cmd, $result, $result_code);
+		[$result, $result_code] = $this->execWrapper($cmd);
 
 		if ($result_code !== 0) {
 			throw new Exception("There was an error committing");
@@ -131,9 +119,7 @@ class Git {
 
 	public function pullFromRemote(): bool {
 		$cmd = "git pull origin HEAD";
-		$result = [];
-		$result_code = 0;
-		exec($cmd, $result, $result_code);
+		[$result, $result_code] = $this->execWrapper($cmd);
 
 		if ($result_code !== 0) {
 			throw new Exception("There was an error pulling from remote");
@@ -145,9 +131,7 @@ class Git {
 	public function pushToRemote(): bool {
 		$this->pullFromRemote();
 		$cmd = "git push origin HEAD";
-		$result = [];
-		$result_code = 0;
-		exec($cmd, $result, $result_code);
+		[$result, $result_code] = $this->execWrapper($cmd);
 
 		if ($result_code !== 0) {
 			throw new Exception("There was an error pushing to remote");
@@ -158,15 +142,12 @@ class Git {
 
 	public function getModifiedFiles(): array {
 		$cmd = "git diff --name-only";
-		$result = [];
-		$result_code = 0;
-		exec($cmd, $result, $result_code);
+		[$result, $result_code] = $this->execWrapper($cmd);
 
 		if ($result_code !== 0) {
 			throw new Exception("There was an error getting modified files");
 		}
 
-		// add untracked files to the result
 		$untracked_files = $this->getUntrackedFiles();
 		$result = array_merge($result, $untracked_files);
 
@@ -175,9 +156,7 @@ class Git {
 
 	public function cloneRepo(string $repo_url, string $path = '.'): bool {
 		$cmd = "git clone $repo_url $path";
-		$result = [];
-		$result_code = 0;
-		exec($cmd, $result, $result_code);
+		[$result, $result_code] = $this->execWrapper($cmd);
 
 		if ($result_code !== 0) {
 			throw new Exception("There was an error cloning the repo");
@@ -188,9 +167,7 @@ class Git {
 
 	public function getCurrentBranch(): string {
 		$cmd = "git rev-parse --abbrev-ref HEAD";
-		$result = [];
-		$result_code = 0;
-		exec($cmd, $result, $result_code);
+		[$result, $result_code] = $this->execWrapper($cmd);
 
 		if ($result_code !== 0 || empty($result)) {
 			throw new Exception("There was an error getting the current branch");
@@ -201,9 +178,7 @@ class Git {
 
 	public function checkoutBranch(string $branch_name): bool {
 		$cmd = "git checkout $branch_name";
-		$result = [];
-		$result_code = 0;
-		exec($cmd, $result, $result_code);
+		[$result, $result_code] = $this->execWrapper($cmd);
 		
 		if ($result_code !== 0) {
 			throw new Exception("There was an error checking out branch $branch_name");
@@ -214,14 +189,25 @@ class Git {
 
 	public function mergeBranch(string $branch_name): bool {
 		$cmd = "git merge --no-edit -m \"Merging changes from $branch_name\" $branch_name";
-		$result = [];
-		$result_code = 0;
-		exec($cmd, $result, $result_code);
+		[$result, $result_code] = $this->execWrapper($cmd);
 		
 		if ($result_code !== 0) {
 			throw new Exception("There was an error merging branch $branch_name");
 		}
 
 		return true;
+	}
+
+	/**
+	 * @param non-empty-string $cmd
+	 * @return array{0:array, 1:int}
+	 */
+	protected function execWrapper($cmd): array {
+		$result = [];
+		$result_code = 0;
+		
+		exec($cmd, $result, $result_code);
+
+		return [$result, $result_code];
 	}
 }
