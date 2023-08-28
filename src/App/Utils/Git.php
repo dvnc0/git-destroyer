@@ -185,4 +185,43 @@ class Git {
 
 		return true;
 	}
+
+	public function getCurrentBranch(): string {
+		$cmd = "git rev-parse --abbrev-ref HEAD";
+		$result = [];
+		$result_code = 0;
+		exec($cmd, $result, $result_code);
+
+		if ($result_code !== 0 || empty($result)) {
+			throw new Exception("There was an error getting the current branch");
+		}
+
+		return $result[0];
+	}
+
+	public function checkoutBranch(string $branch_name): bool {
+		$cmd = "git checkout $branch_name";
+		$result = [];
+		$result_code = 0;
+		exec($cmd, $result, $result_code);
+		
+		if ($result_code !== 0) {
+			throw new Exception("There was an error checking out branch $branch_name");
+		}
+
+		return true;
+	}
+
+	public function mergeBranch(string $branch_name): bool {
+		$cmd = "git merge --no-edit -m \"Merging changes from $branch_name\" $branch_name";
+		$result = [];
+		$result_code = 0;
+		exec($cmd, $result, $result_code);
+		
+		if ($result_code !== 0) {
+			throw new Exception("There was an error merging branch $branch_name");
+		}
+
+		return true;
+	}
 }

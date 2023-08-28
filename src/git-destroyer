@@ -17,6 +17,7 @@ use Clyde\Args\Arg_Option;
 use Git_Destroyer\Actions\Clone_Action;
 use Git_Destroyer\Actions\Commit_Action;
 use Git_Destroyer\Actions\Push_Action;
+use Git_Destroyer\Actions\Staging_Action;
 use Git_Destroyer\Actions\Switch_Branch_Action;
 
 define('ROOT', getcwd());
@@ -114,18 +115,18 @@ Application::create('git-destroyer')
 			)
 			->save()
 	)
-	// ->command(
-	// 	Command::create('staging-push')
-	// 		->about('Merge your changes into the staging branch and push them')
-	// 		->action(Push_Action::class)
-	// 		->save()
-	// )
-	// ->command(
-	// 	Command::create('live-push')
-	// 		->about('Merge your changes into the live branch and push them')
-	// 		->action(Push_Action::class)
-	// 		->save()
-	// )
+	->command(
+		Command::create('staging-push')
+			->about('Merge your changes into the staging branch and push them')
+			->action(Staging_Action::class)
+			->save()
+	)
+	->command(
+		Command::create('live-push')
+			->about('Merge your changes into the live branch and push them')
+			->action(Push_Action::class)
+			->save()
+	)
 	->command(
 		Command::create('push')
 			->about('Push your changes to the remote')
