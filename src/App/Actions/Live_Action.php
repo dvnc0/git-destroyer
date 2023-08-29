@@ -10,20 +10,21 @@ use Exception;
 /**
  * @phpstan-import-type ConfigType from Config
  */
-class live_Action extends Action_Extender {
+class live_Action extends Action_Extender
+{
 	
 	public function execute(Request $Request): Request_Response {
 		$has_live = $this->config['has_live'];
 
 		if (!$has_live) {
 			$this->Printer->error("This repository does not have a live branch");
-			return new Request_Response(false, "This repository does not have a live branch");
+			return new Request_Response(FALSE, "This repository does not have a live branch");
 		}
 
-		$live_branch = $this->config['live'];
+		$live_branch    = $this->config['live'];
 		$current_branch = $this->Git->getCurrentBranch();
 
-		$pre_hooks = $this->config['hooks']['live']['pre'];
+		$pre_hooks  = $this->config['hooks']['live']['pre'];
 		$post_hooks = $this->config['hooks']['live']['post'];
 
 		$this->checkForUncommittedChanges();
@@ -48,14 +49,14 @@ class live_Action extends Action_Extender {
 		$this->Printer->success("Checking out $current_branch branch...");
 		$this->Git->checkoutBranch($current_branch);
 
-		return new Request_Response(true, "Changes have been staged");
+		return new Request_Response(TRUE, "Changes have been staged");
 	}
 
 	protected function runHook(array $hooks, string $message): void {
 		$this->Printer->success($message);
 		foreach($hooks as $hook) {
-			$cmd = $hook;
-			$result = [];
+			$cmd         = $hook;
+			$result      = [];
 			$result_code = 0;
 			exec($cmd, $result, $result_code);
 

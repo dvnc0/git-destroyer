@@ -8,7 +8,8 @@ use Git_Destroyer\Utils\Config;
 /**
  * @phpstan-import-type ConfigType from Config
  */
-class Git {
+class Git
+{
 
 	/**
 	 * @var Config
@@ -24,7 +25,7 @@ class Git {
 	 * @return boolean
 	 */
 	public function hasUntrackedFiles(): bool {
-		$cmd = "git ls-files --others --exclude-standard";
+		$cmd                    = "git ls-files --others --exclude-standard";
 		[$result, $result_code] = $this->execWrapper($cmd);
 
 		if ($result_code !== 0) {
@@ -35,14 +36,14 @@ class Git {
 	}
 
 	public function getUntrackedFiles(): array {
-		$cmd = "git ls-files --others --exclude-standard";
+		$cmd                    = "git ls-files --others --exclude-standard";
 		[$result, $result_code] = $this->execWrapper($cmd);
 
 		return $result;
 	}
 
 	public function hasUncommittedChanges(): bool {
-		$cmd = "git diff --name-only";
+		$cmd                    = "git diff --name-only";
 		[$result, $result_code] = $this->execWrapper($cmd);
 
 		if ($result_code !== 0) {
@@ -63,7 +64,7 @@ class Git {
 		$config = $this->Config->loadConfigFromFile(ROOT . '/' . Config::CONFIG_NAME);
 
 		if ($config['uses_prefix']) {
-			if(strpos($branch_name, $config['branch_prefix']) === false) {
+			if(strpos($branch_name, $config['branch_prefix']) === FALSE) {
 				$branch_name = $config['branch_prefix'] . '-' . $branch_name;
 			}
 		}
@@ -78,24 +79,24 @@ class Git {
 			throw new Exception("There was an error creating the new branch");
 		}
 
-		return true;
+		return TRUE;
 	}
 
 	public function addAllFiles(): bool {
-		$cmd = "git add .";
+		$cmd                    = "git add .";
 		[$result, $result_code] = $this->execWrapper($cmd);
 
 		if ($result_code !== 0) {
 			throw new Exception("There was an error adding all files");
 		}
 
-		return true;
+		return TRUE;
 	}
 
 	public function addFiles(array $files):bool {
 		foreach ($files as $file) {
-			$cmd = "git add $file";
-			$result = [];
+			$cmd         = "git add $file";
+			$result      = [];
 			$result_code = 0;
 			exec($cmd, $result, $result_code);
 	
@@ -103,45 +104,45 @@ class Git {
 				throw new Exception("There was an error adding file $file");
 			}
 		}
-		return true;
+		return TRUE;
 	}
 
 	public function commit(string $commit_message): bool {
-		$cmd = "git commit -m \"$commit_message\"";
+		$cmd                    = "git commit -m \"$commit_message\"";
 		[$result, $result_code] = $this->execWrapper($cmd);
 
 		if ($result_code !== 0) {
 			throw new Exception("There was an error committing");
 		}
 
-		return true;
+		return TRUE;
 	}
 
 	public function pullFromRemote(): bool {
-		$cmd = "git pull origin HEAD";
+		$cmd                    = "git pull origin HEAD";
 		[$result, $result_code] = $this->execWrapper($cmd);
 
 		if ($result_code !== 0) {
 			throw new Exception("There was an error pulling from remote");
 		}
 
-		return true;
+		return TRUE;
 	}
 
 	public function pushToRemote(): bool {
 		$this->pullFromRemote();
-		$cmd = "git push origin HEAD";
+		$cmd                    = "git push origin HEAD";
 		[$result, $result_code] = $this->execWrapper($cmd);
 
 		if ($result_code !== 0) {
 			throw new Exception("There was an error pushing to remote");
 		}
 
-		return true;
+		return TRUE;
 	}
 
 	public function getModifiedFiles(): array {
-		$cmd = "git diff --name-only";
+		$cmd                    = "git diff --name-only";
 		[$result, $result_code] = $this->execWrapper($cmd);
 
 		if ($result_code !== 0) {
@@ -149,24 +150,24 @@ class Git {
 		}
 
 		$untracked_files = $this->getUntrackedFiles();
-		$result = array_merge($result, $untracked_files);
+		$result          = array_merge($result, $untracked_files);
 
 		return $result;
 	}
 
 	public function cloneRepo(string $repo_url, string $path = '.'): bool {
-		$cmd = "git clone $repo_url $path";
+		$cmd                    = "git clone $repo_url $path";
 		[$result, $result_code] = $this->execWrapper($cmd);
 
 		if ($result_code !== 0) {
 			throw new Exception("There was an error cloning the repo");
 		}
 
-		return true;
+		return TRUE;
 	}
 
 	public function getCurrentBranch(): string {
-		$cmd = "git rev-parse --abbrev-ref HEAD";
+		$cmd                    = "git rev-parse --abbrev-ref HEAD";
 		[$result, $result_code] = $this->execWrapper($cmd);
 
 		if ($result_code !== 0 || empty($result)) {
@@ -177,25 +178,25 @@ class Git {
 	}
 
 	public function checkoutBranch(string $branch_name): bool {
-		$cmd = "git checkout $branch_name";
+		$cmd                    = "git checkout $branch_name";
 		[$result, $result_code] = $this->execWrapper($cmd);
 		
 		if ($result_code !== 0) {
 			throw new Exception("There was an error checking out branch $branch_name");
 		}
 
-		return true;
+		return TRUE;
 	}
 
 	public function mergeBranch(string $branch_name): bool {
-		$cmd = "git merge --no-edit -m \"Merging changes from $branch_name\" $branch_name";
+		$cmd                    = "git merge --no-edit -m \"Merging changes from $branch_name\" $branch_name";
 		[$result, $result_code] = $this->execWrapper($cmd);
 		
 		if ($result_code !== 0) {
 			throw new Exception("There was an error merging branch $branch_name");
 		}
 
-		return true;
+		return TRUE;
 	}
 
 	/**
@@ -203,7 +204,7 @@ class Git {
 	 * @return array{0:array, 1:int}
 	 */
 	protected function execWrapper($cmd): array {
-		$result = [];
+		$result      = [];
 		$result_code = 0;
 		
 		exec($cmd, $result, $result_code);

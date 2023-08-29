@@ -8,12 +8,13 @@ use Clyde\Request\Request;
 /**
  * @phpstan-import-type ConfigType from Config
  */
-class New_Branch_Action extends Action_Extender {
+class New_Branch_Action extends Action_Extender
+{
 
 	/**
 	 * creates the config file
 	 *
-	 * @param Request $Request  Request
+	 * @param Request $Request Request
 	 * @return Request_Response
 	 */
 	public function execute(Request $Request): Request_Response {
@@ -25,7 +26,7 @@ class New_Branch_Action extends Action_Extender {
 		$this->checkForUntrackedFiles();
 
 		$this->Printer->success("Running hooks...");
-		$pre_hooks = $this->config['hooks']['new_branch']['pre'];
+		$pre_hooks  = $this->config['hooks']['new_branch']['pre'];
 		$post_hooks = $this->config['hooks']['new_branch']['post'];
 
 		foreach ($pre_hooks as $hook) {
@@ -44,7 +45,7 @@ class New_Branch_Action extends Action_Extender {
 			$this->runHook($hook);
 		}
 
-		return new Request_Response(true);
+		return new Request_Response(TRUE);
 	}
 
 	/**
@@ -55,7 +56,7 @@ class New_Branch_Action extends Action_Extender {
 	 */
 	protected function runHook(string $hook): void {
 		$this->Printer->message("Running pre hook: " . $hook);
-		$result = [];
+		$result      = [];
 		$result_code = 0;
 		exec($hook, $result, $result_code);
 

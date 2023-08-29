@@ -15,7 +15,8 @@ use Exception;
 /**
  * @phpstan-import-type ConfigType from Config
  */
-abstract class Action_Extender extends Action_Base {
+abstract class Action_Extender extends Action_Base
+{
 	/**
 	 * @var ConfigType|false
 	 */
@@ -33,16 +34,16 @@ abstract class Action_Extender extends Action_Base {
 	
 	public function __construct(Application $Application, Event_Dispatcher $Event_Dispatcher) {
 		parent::__construct($Application, $Event_Dispatcher);
-		$Config = $this->getConfigInstance();
+		$Config       = $this->getConfigInstance();
 		$this->config = $Config->loadConfigFromFile(ROOT . '/' . Config::CONFIG_NAME);
-		$this->Git = $this->getGitInstance();
-		$this->Input = $this->getInputInstance();
+		$this->Git    = $this->getGitInstance();
+		$this->Input  = $this->getInputInstance();
 
 		$this->checkForConfig();
 	}
 
 	public function checkForConfig() {
-		if ($this->config === false) {
+		if ($this->config === FALSE) {
 			$this->Printer->alert(Emoji::WARNING . " No config file found!");
 			[$create_init] = $this->Input->list("Would you like to create one?", ['Yes', 'No']) ?: ['No'];
 

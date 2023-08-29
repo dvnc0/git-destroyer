@@ -10,10 +10,11 @@ use Exception;
 /**
  * @phpstan-import-type ConfigType from Config
  */
-class Script_Action extends Action_Extender {
+class Script_Action extends Action_Extender
+{
 
 	public function execute(Request $Request): Request_Response {
-		$scripts = $this->config['hooks']['scripts'];
+		$scripts     = $this->config['hooks']['scripts'];
 		$script_name = $Request->getArgument('name');
 
 		if (empty($scripts[$script_name])) {
@@ -21,8 +22,8 @@ class Script_Action extends Action_Extender {
 		}
 
 		$this->Printer->success("Running script $script_name");
-		$cmd = $scripts[$script_name];
-		$result = [];
+		$cmd         = $scripts[$script_name];
+		$result      = [];
 		$result_code = 0;
 		exec($cmd, $result, $result_code);
 
@@ -32,6 +33,6 @@ class Script_Action extends Action_Extender {
 			throw new Exception("There was an error running script $script_name");
 		}
 		$this->Printer->success("Script $script_name ran successfully");
-		return new Request_Response(true, "Script $script_name ran successfully");
+		return new Request_Response(TRUE, "Script $script_name ran successfully");
 	}
 }

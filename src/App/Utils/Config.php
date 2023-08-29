@@ -33,9 +33,10 @@ use Exception;
  *     scripts: array<string, string>
  *   }
  */
-class Config {
+class Config
+{
 
-	const CONFIG_NAME = "git-destroyer-config.json";
+	const CONFIG_NAME       = "git-destroyer-config.json";
 	const HOOKS_CONFIG_NAME = "git-destroyer-hooks.json";
 	/**
 	 * load config from file
@@ -49,10 +50,10 @@ class Config {
 		}
 
 		if (!file_exists($file_path)) {
-			return false;
+			return FALSE;
 		}
 
-		$config = json_decode(file_get_contents($file_path), true);
+		$config = json_decode(file_get_contents($file_path), TRUE);
 
 		$config['hooks'] = $this->getHooksFile();
 
@@ -74,7 +75,7 @@ class Config {
 			return [];
 		}
 
-		$hooks = json_decode(file_get_contents($hooks_file), true);
+		$hooks = json_decode(file_get_contents($hooks_file), TRUE);
 
 		if (json_last_error() !== JSON_ERROR_NONE) {
 			throw new Exception("There was an error parsing the hooks file");

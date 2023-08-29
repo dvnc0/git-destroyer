@@ -10,12 +10,13 @@ use Exception;
 /**
  * @phpstan-import-type ConfigType from Config
  */
-class Commit_Action extends Action_Extender {
+class Commit_Action extends Action_Extender
+{
 
 	public function execute(Request $Request): Request_Response {
 
 		$add_all = $Request->getArgument('add_all');
-		$files = $Request->getArgument('files');
+		$files   = $Request->getArgument('files');
 
 		if ($add_all) {
 			$this->Printer->success("Adding all files...");
@@ -27,8 +28,8 @@ class Commit_Action extends Action_Extender {
 		}
 
 		if (!$add_all && empty($files)) {
-			$files = $this->Git->getModifiedFiles();
-			$files[] = "Add All";
+			$files        = $this->Git->getModifiedFiles();
+			$files[]      = "Add All";
 			$files_to_add = $this->Input->multipleChoice("Which files would you like to add?", $files);
 			if (in_array("Add All", $files_to_add)) {
 				$this->Git->addAllFiles();
@@ -40,7 +41,7 @@ class Commit_Action extends Action_Extender {
 		$this->checkForUncommittedChanges();
 		$this->checkForUntrackedFiles();
 
-		$pre_hooks = $this->config['hooks']['commit']['pre'];
+		$pre_hooks  = $this->config['hooks']['commit']['pre'];
 		$post_hooks = $this->config['hooks']['commit']['post'];
 
 		$this->runHook($pre_hooks, "Running pre commit hooks...");
@@ -56,14 +57,14 @@ class Commit_Action extends Action_Extender {
 
 		$this->runHook($post_hooks, "Running post commit hooks...");
 
-		return new Request_Response(true, "Files committed");
+		return new Request_Response(TRUE, "Files committed");
 	}
 
 	protected function runHook(array $hooks, string $message): void {
 		$this->Printer->success($message);
 		foreach($hooks as $hook) {
-			$cmd = $hook;
-			$result = [];
+			$cmd         = $hook;
+			$result      = [];
 			$result_code = 0;
 			exec($cmd, $result, $result_code);
 

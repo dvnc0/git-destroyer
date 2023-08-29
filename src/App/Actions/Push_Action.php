@@ -9,7 +9,8 @@ use Clyde\Request\Request;
 /**
  * @phpstan-import-type ConfigType from Config
  */
-class Push_Action extends Action_Extender {
+class Push_Action extends Action_Extender
+{
 
 	public function execute(Request $Request): Request_Response {
 		$this->checkForUncommittedChanges();
@@ -20,6 +21,6 @@ class Push_Action extends Action_Extender {
 		$this->Printer->success("Pushing files...");
 		$this->Git->pushToRemote();
 
-		return new Request_Response(true, "Files committed");
+		return new Request_Response(TRUE, "Files committed");
 	}
 }

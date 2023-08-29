@@ -5,7 +5,8 @@ use Git_Destroyer\Actions\Action_Extender;
 use Clyde\Request\Request_Response;
 use Clyde\Request\Request;
 
-class Switch_Branch_Action extends Action_Extender {
+class Switch_Branch_Action extends Action_Extender
+{
 
 	/**
 	 * Execute the action
@@ -23,6 +24,6 @@ class Switch_Branch_Action extends Action_Extender {
 		$this->Git->checkoutBranch($branch_name);
 		$this->Git->pullFromRemote();
 
-		return new Request_Response(true, "Switched to branch $branch_name");
+		return new Request_Response(TRUE, "Switched to branch $branch_name");
 	}
 }
