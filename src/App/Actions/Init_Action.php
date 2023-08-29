@@ -36,32 +36,37 @@ class Init_Action extends Action_Extender {
 			'uses_prefix' => $has_prefix[0] === 'Yes',
 			'branch_prefix' => $branch_prefix,
 			'new_branch' => $new_branch,
-			'hooks' => [
-				'new_branch' => [
-					'pre' => [],
-					'post' => [],
-				],
-				'commit' => [
-					'pre' => [],
-					'post' => [],
-				],
-				'staging' => [
-					'pre' => [],
-					'post' => [],
-				],
-				'live' => [
-					'pre' => [],
-					'post' => [],
-				],
-				'scripts' => [
-					'example' => 'echo "hello world"',
-				],
-			]
+		];
+
+		$hooks_file = [
+			'new_branch' => [
+				'pre' => [],
+				'post' => [],
+			],
+			'commit' => [
+				'pre' => [],
+				'post' => [],
+			],
+			'staging' => [
+				'pre' => [],
+				'post' => [],
+			],
+			'live' => [
+				'pre' => [],
+				'post' => [],
+			],
+			'scripts' => [
+				'example' => 'echo "hello world"',
+			],
 		];
 
 		$this->Printer->success("Creating config file...");
 		$file_name = ROOT . '/git-destroyer-config.json';
 		file_put_contents($file_name, json_encode($config_file, JSON_PRETTY_PRINT));
+
+		$this->Printer->success("Creating hooks file...");
+		$file_name = ROOT . '/git-destroyer-hooks.json';
+		file_put_contents($file_name, json_encode($hooks_file, JSON_PRETTY_PRINT));
 		
 		return new Request_Response(true);
 	}
