@@ -63,12 +63,25 @@ class Init_Action extends Action_Extender
 
 		$this->Printer->success("Creating config file...");
 		$file_name = ROOT . '/git-destroyer-config.json';
-		file_put_contents($file_name, json_encode($config_file, JSON_PRETTY_PRINT));
+		$this->filePutContents($file_name, json_encode($config_file, JSON_PRETTY_PRINT));
 
 		$this->Printer->success("Creating hooks file...");
 		$file_name = ROOT . '/git-destroyer-hooks.json';
-		file_put_contents($file_name, json_encode($hooks_file, JSON_PRETTY_PRINT));
+		$this->filePutContents($file_name, json_encode($hooks_file, JSON_PRETTY_PRINT));
 		
 		return new Request_Response(TRUE);
+	}
+
+	/**
+	 * test wrapper, so we can mock this in tests
+	 *
+	 * @param string $file_name file name to create
+	 * @param string $contents  contents to add
+	 * @return int<0,max>|boolean
+	 * 
+	 * @codeCoverageIgnore
+	 */
+	protected function filePutContents(string $file_name, string $contents): int|bool {
+		return file_put_contents($file_name, $contents);
 	}
 }

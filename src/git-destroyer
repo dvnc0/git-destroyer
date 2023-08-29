@@ -16,6 +16,7 @@ use Git_Destroyer\Actions\Script_Action;
 use Clyde\Args\Arg_Option;
 use Git_Destroyer\Actions\Clone_Action;
 use Git_Destroyer\Actions\Commit_Action;
+use Git_Destroyer\Actions\Live_Action;
 use Git_Destroyer\Actions\Push_Action;
 use Git_Destroyer\Actions\Staging_Action;
 use Git_Destroyer\Actions\Switch_Branch_Action;
@@ -124,7 +125,7 @@ Application::create('git-destroyer')
 	->command(
 		Command::create('live-push')
 			->about('Merge your changes into the live branch and push them')
-			->action(Push_Action::class)
+			->action(Live_Action::class)
 			->save()
 	)
 	->command(

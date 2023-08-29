@@ -41,7 +41,7 @@ class Config
 	/**
 	 * load config from file
 	 *
-	 * @param non-empty-string $file_path
+	 * @param non-empty-string $file_path the file path
 	 * @return ConfigType|false
 	 */
 	public function loadConfigFromFile(string $file_path): array|bool {
@@ -53,7 +53,7 @@ class Config
 			return FALSE;
 		}
 
-		$config = json_decode(file_get_contents($file_path), TRUE);
+		$config = json_decode($this->getFileContents($file_path), TRUE);
 
 		$config['hooks'] = $this->getHooksFile();
 
@@ -67,7 +67,7 @@ class Config
 	/**
 	 * Gets the hook config file
 	 *
-	 * @return HookArray|empty-array
+	 * @return array|HookArray
 	 */
 	protected function getHooksFile(): array {
 		$hooks_file = ROOT . '/' . self::HOOKS_CONFIG_NAME;
@@ -75,12 +75,24 @@ class Config
 			return [];
 		}
 
-		$hooks = json_decode(file_get_contents($hooks_file), TRUE);
+		$hooks = json_decode($this->getFileContents($hooks_file), TRUE);
 
 		if (json_last_error() !== JSON_ERROR_NONE) {
 			throw new Exception("There was an error parsing the hooks file");
 		}
 
 		return $hooks;
+	}
+
+	/**
+	 * Wrapper test helper
+	 *
+	 * @param string $path path to file
+	 * @return string|false
+	 * 
+	 * @codeCoverageIgnore
+	 */
+	protected function getFileContents(string $path): string|false {
+		return file_get_contents($path);
 	}
 }

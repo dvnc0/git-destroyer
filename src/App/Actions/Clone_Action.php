@@ -7,16 +7,24 @@ use Clyde\Request\Request;
 use Git_Destroyer\Actions\Action_Extender;
 use Git_Destroyer\Tasks\Clone_Task;
 
-/**
- * @phpstan-import-type ConfigType from Config
- */
 class Clone_Action extends Action_Extender
 {
-
+	/**
+	 * Gets a Clone_Task instance
+	 * 
+	 * @return Clone_Task
+	 * @codeCoverageIgnore
+	 */
 	protected function getTask(): Clone_Task {
 		return new Clone_Task($this->Application);
 	}
 
+	/**
+	 * Execute clone_action, runs clone_task
+	 * 
+	 * @param Request $Request Request
+	 * @return Request_Response
+	 */
 	public function execute(Request $Request): Request_Response {
 		$Runner            = $this->getTaskRunner();
 		$Task              = $this->getTask();

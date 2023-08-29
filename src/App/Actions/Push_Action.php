@@ -6,12 +6,15 @@ use Git_Destroyer\Actions\Action_Extender;
 use Clyde\Request\Request_Response;
 use Clyde\Request\Request;
 
-/**
- * @phpstan-import-type ConfigType from Config
- */
 class Push_Action extends Action_Extender
 {
 
+	/**
+	 * Execute the action
+	 *
+	 * @param Request $Request The Request
+	 * @return Request_Response
+	 */
 	public function execute(Request $Request): Request_Response {
 		$this->checkForUncommittedChanges();
 		$this->checkForUntrackedFiles();	

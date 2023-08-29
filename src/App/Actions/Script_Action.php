@@ -7,12 +7,15 @@ use Clyde\Request\Request_Response;
 use Clyde\Request\Request;
 use Exception;
 
-/**
- * @phpstan-import-type ConfigType from Config
- */
 class Script_Action extends Action_Extender
 {
 
+	/**
+	 * Execute the action
+	 *
+	 * @param Request $Request The Request
+	 * @return Request_Response
+	 */
 	public function execute(Request $Request): Request_Response {
 		$scripts     = $this->config['hooks']['scripts'];
 		$script_name = $Request->getArgument('name');
@@ -22,10 +25,8 @@ class Script_Action extends Action_Extender
 		}
 
 		$this->Printer->success("Running script $script_name");
-		$cmd         = $scripts[$script_name];
-		$result      = [];
-		$result_code = 0;
-		exec($cmd, $result, $result_code);
+		$cmd                    = $scripts[$script_name];
+		[$result, $result_code] = $this->execWrapper($cmd);
 
 		print(implode("\n", $result) . "\n");
 

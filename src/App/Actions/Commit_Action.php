@@ -7,12 +7,15 @@ use Clyde\Request\Request_Response;
 use Clyde\Request\Request;
 use Exception;
 
-/**
- * @phpstan-import-type ConfigType from Config
- */
 class Commit_Action extends Action_Extender
 {
 
+	/**
+	 * Execute the action
+	 *
+	 * @param Request $Request The Request
+	 * @return Request_Response
+	 */
 	public function execute(Request $Request): Request_Response {
 
 		$add_all = $Request->getArgument('add_all');
@@ -60,13 +63,18 @@ class Commit_Action extends Action_Extender
 		return new Request_Response(TRUE, "Files committed");
 	}
 
+	/**
+	 * Run a hook
+	 *
+	 * @param array  $hooks   The hooks to run
+	 * @param string $message The message to display
+	 * @return void
+	 */
 	protected function runHook(array $hooks, string $message): void {
 		$this->Printer->success($message);
 		foreach($hooks as $hook) {
-			$cmd         = $hook;
-			$result      = [];
-			$result_code = 0;
-			exec($cmd, $result, $result_code);
+			$cmd                    = $hook;
+			[$result, $result_code] = $this->execWrapper($cmd);
 
 			if ($result_code !== 0) {
 				throw new Exception("There was an error running hook: $hook");

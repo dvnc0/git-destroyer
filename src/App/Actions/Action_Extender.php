@@ -13,7 +13,7 @@ use Clyde\Tasks\Task_Runner;
 use Exception;
 
 /**
- * @phpstan-import-type ConfigType from Config
+ * @phpstan-import-type ConfigType from \Git_Destroyer\Utils\Config
  */
 abstract class Action_Extender extends Action_Base
 {
@@ -32,6 +32,12 @@ abstract class Action_Extender extends Action_Base
 	 */
 	protected Git $Git;
 	
+	/**
+	 * construct
+	 *
+	 * @param Application      $Application      Application
+	 * @param Event_Dispatcher $Event_Dispatcher Event Dispatcher
+	 */
 	public function __construct(Application $Application, Event_Dispatcher $Event_Dispatcher) {
 		parent::__construct($Application, $Event_Dispatcher);
 		$Config       = $this->getConfigInstance();
@@ -42,7 +48,12 @@ abstract class Action_Extender extends Action_Base
 		$this->checkForConfig();
 	}
 
-	public function checkForConfig() {
+	/**
+	 * Check for config file
+	 *
+	 * @return void
+	 */
+	public function checkForConfig(): void {
 		if ($this->config === FALSE) {
 			$this->Printer->alert(Emoji::WARNING . " No config file found!");
 			[$create_init] = $this->Input->list("Would you like to create one?", ['Yes', 'No']) ?: ['No'];
@@ -55,10 +66,20 @@ abstract class Action_Extender extends Action_Base
 		}
 	}
 
+	/**
+	 * Return an instance of Config
+	 *
+	 * @return Config
+	 */
 	protected function getConfigInstance(): Config {
 		return new Config;
 	}
 
+	/**
+	 * Return an instance of Input
+	 *
+	 * @return Input
+	 */
 	protected function getInputInstance(): Input {
 		return new Input($this->Printer);
 	}
@@ -81,6 +102,11 @@ abstract class Action_Extender extends Action_Base
 		return $this->config;
 	}
 
+	/**
+	 * Return the Task Runner
+	 *
+	 * @return Task_Runner
+	 */
 	protected function getTaskRunner(): Task_Runner {
 		return new Task_Runner($this->Application);
 	}
@@ -120,5 +146,19 @@ abstract class Action_Extender extends Action_Base
 				exit(0);
 			}
 		}
+	}
+
+	/**
+	 * @param non-empty-string $cmd command to run
+	 * @return array{0:array, 1:int}
+	 * @codeCoverageIgnore
+	 */
+	protected function execWrapper($cmd): array {
+		$result      = [];
+		$result_code = 0;
+		
+		exec($cmd, $result, $result_code);
+
+		return [$result, $result_code];
 	}
 }

@@ -4,3 +4,4 @@ vendor
 git-destroyer-config.json
 git-destroyer-hooks.json
 .phpunit.cache
+stan.php

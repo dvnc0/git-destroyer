@@ -5,9 +5,6 @@ use Git_Destroyer\Actions\Action_Extender;
 use Clyde\Request\Request_Response;
 use Clyde\Request\Request;
 
-/**
- * @phpstan-import-type ConfigType from Config
- */
 class New_Branch_Action extends Action_Extender
 {
 
@@ -56,9 +53,7 @@ class New_Branch_Action extends Action_Extender
 	 */
 	protected function runHook(string $hook): void {
 		$this->Printer->message("Running pre hook: " . $hook);
-		$result      = [];
-		$result_code = 0;
-		exec($hook, $result, $result_code);
+		[$result, $result_code] = $this->execWrapper($hook);
 
 		if ($result_code !== 0) {
 			$this->Printer->error("There was an error running: " . $hook);
