@@ -16,7 +16,7 @@ use Exception;
  *   uses_prefix: bool,
  *   branch_prefix: string,
  *   new_branch: string,
- *   hooks: array{
+ *   hooks?: array{
  *     new_branch: array{ pre: array<string>, post: array<string> },
  * 	   commit: array{ pre: array<string>, post: array<string> },
  * 	   staging: array{ pre: array<string>, post: array<string> },

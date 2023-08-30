@@ -16,11 +16,15 @@ class Git
 	 */
 	protected Config $Config;
 
+	/**
+	 * construct
+	 */
 	public function __construct() {
 		$this->Config = new Config();
 	}
+
 	/**
-	 * check if repo has untracked filed
+	 * check if repo has untracked files
 	 *
 	 * @return boolean
 	 */
@@ -35,6 +39,11 @@ class Git
 		return !empty($result);
 	}
 
+	/**
+	 * get untracked files
+	 *
+	 * @return array<string>
+	 */
 	public function getUntrackedFiles(): array {
 		$cmd                    = "git ls-files --others --exclude-standard";
 		[$result, $result_code] = $this->execWrapper($cmd);
@@ -42,6 +51,11 @@ class Git
 		return $result;
 	}
 
+	/**
+	 * check if repo has uncommitted changes
+	 *
+	 * @return boolean
+	 */
 	public function hasUncommittedChanges(): bool {
 		$cmd                    = "git diff --name-only";
 		[$result, $result_code] = $this->execWrapper($cmd);
@@ -56,7 +70,7 @@ class Git
 	/**
 	 * creates a new branch
 	 *
-	 * @param non-empty-string $branch_name
+	 * @param non-empty-string $branch_name the branch name to create
 	 * @return boolean
 	 */
 	public function createNewBranch(string $branch_name): bool {
@@ -82,6 +96,11 @@ class Git
 		return TRUE;
 	}
 
+	/**
+	 * add all files to the commit
+	 * 
+	 * @return boolean
+	 */
 	public function addAllFiles(): bool {
 		$cmd                    = "git add .";
 		[$result, $result_code] = $this->execWrapper($cmd);
@@ -93,6 +112,12 @@ class Git
 		return TRUE;
 	}
 
+	/**
+	 * Files to add to the commit
+	 * 
+	 * @param array<string> $files files to add
+	 * @return boolean
+	 */
 	public function addFiles(array $files):bool {
 		foreach ($files as $file) {
 			$cmd         = "git add $file";
@@ -107,6 +132,12 @@ class Git
 		return TRUE;
 	}
 
+	/**
+	 * Commit with message
+	 * 
+	 * @param non-empty-string $commit_message message for commit
+	 * @return boolean
+	 */
 	public function commit(string $commit_message): bool {
 		$cmd                    = "git commit -m \"$commit_message\"";
 		[$result, $result_code] = $this->execWrapper($cmd);
@@ -118,6 +149,11 @@ class Git
 		return TRUE;
 	}
 
+	/**
+	 * pull from remote
+	 * 
+	 * @return boolean
+	 */	
 	public function pullFromRemote(): bool {
 		$cmd                    = "git pull origin HEAD";
 		[$result, $result_code] = $this->execWrapper($cmd);
@@ -129,6 +165,11 @@ class Git
 		return TRUE;
 	}
 
+	/**
+	 * push to remote
+	 * 
+	 * @return boolean
+	 */
 	public function pushToRemote(): bool {
 		$this->pullFromRemote();
 		$cmd                    = "git push origin HEAD";
@@ -141,6 +182,11 @@ class Git
 		return TRUE;
 	}
 
+	/**
+	 * get modified files
+	 * 
+	 * @return array<string>
+	 */
 	public function getModifiedFiles(): array {
 		$cmd                    = "git diff --name-only";
 		[$result, $result_code] = $this->execWrapper($cmd);
@@ -155,6 +201,14 @@ class Git
 		return $result;
 	}
 
+	/**
+	 * clone a repo
+	 * 
+	 * @param non-empty-string $repo_url repo url
+	 * @param non-empty-string $path     file path
+	 * 
+	 * @return bool
+	 */
 	public function cloneRepo(string $repo_url, string $path = '.'): bool {
 		$cmd                    = "git clone $repo_url $path";
 		[$result, $result_code] = $this->execWrapper($cmd);
@@ -166,6 +220,11 @@ class Git
 		return TRUE;
 	}
 
+	/**
+	 * get current branch
+	 * 
+	 * @return non-empty-string
+	 */
 	public function getCurrentBranch(): string {
 		$cmd                    = "git rev-parse --abbrev-ref HEAD";
 		[$result, $result_code] = $this->execWrapper($cmd);
@@ -177,6 +236,12 @@ class Git
 		return $result[0];
 	}
 
+	/**
+	 * checkout a branch
+	 *
+	 * @param non-empty-string $branch_name the branch name to checkout
+	 * @return boolean
+	 */
 	public function checkoutBranch(string $branch_name): bool {
 		$cmd                    = "git checkout $branch_name";
 		[$result, $result_code] = $this->execWrapper($cmd);
@@ -188,6 +253,12 @@ class Git
 		return TRUE;
 	}
 
+	/**
+	 * merge a branch
+	 *
+	 * @param non-empty-string $branch_name branch name to merge
+	 * @return boolean
+	 */
 	public function mergeBranch(string $branch_name): bool {
 		$cmd                    = "git merge --no-edit -m \"Merging changes from $branch_name\" $branch_name";
 		[$result, $result_code] = $this->execWrapper($cmd);
@@ -200,7 +271,9 @@ class Git
 	}
 
 	/**
-	 * @param non-empty-string $cmd
+	 * Testing wrapper for exec
+	 * 
+	 * @param non-empty-string $cmd command to run
 	 * @return array{0:array, 1:int}
 	 */
 	protected function execWrapper($cmd): array {
