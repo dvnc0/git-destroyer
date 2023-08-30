@@ -70,6 +70,7 @@ abstract class Action_Extender extends Action_Base
 	 * Return an instance of Config
 	 *
 	 * @return Config
+	 * @codeCoverageIgnore
 	 */
 	protected function getConfigInstance(): Config {
 		return new Config;
@@ -79,6 +80,7 @@ abstract class Action_Extender extends Action_Base
 	 * Return an instance of Input
 	 *
 	 * @return Input
+	 * @codeCoverageIgnore
 	 */
 	protected function getInputInstance(): Input {
 		return new Input($this->Printer);
@@ -88,6 +90,7 @@ abstract class Action_Extender extends Action_Base
 	 * Return an instance of Git
 	 *
 	 * @return Git
+	 * @codeCoverageIgnore
 	 */
 	protected function getGitInstance(): Git {
 		return new Git;
@@ -97,6 +100,7 @@ abstract class Action_Extender extends Action_Base
 	 * Return the config
 	 * 
 	 * @return ConfigType|false
+	 * @codeCoverageIgnore
 	 */
 	protected function getConfig(): array|bool {
 		return $this->config;
@@ -106,6 +110,7 @@ abstract class Action_Extender extends Action_Base
 	 * Return the Task Runner
 	 *
 	 * @return Task_Runner
+	 * @codeCoverageIgnore
 	 */
 	protected function getTaskRunner(): Task_Runner {
 		return new Task_Runner($this->Application);
@@ -122,7 +127,7 @@ abstract class Action_Extender extends Action_Base
 			$continue = $this->Input->list("Would you like to continue?", ['Yes', 'No']);
 
 			if ($continue[0] === 'No') {
-				exit(0);
+				$this->exitNow(0);
 			}
 		}
 	}
@@ -143,7 +148,7 @@ abstract class Action_Extender extends Action_Base
 
 			if ($continue[0] === 'No') {
 				$this->Printer->message("Aborting new branch creation!");
-				exit(0);
+				$this->exitNow(0);
 			}
 		}
 	}
@@ -160,5 +165,16 @@ abstract class Action_Extender extends Action_Base
 		exec($cmd, $result, $result_code);
 
 		return [$result, $result_code];
+	}
+
+	/**
+	 * Exit now
+	 *
+	 * @param int<0,1> $code exit code
+	 * @return void
+	 * @codeCoverageIgnore
+	 */
+	protected function exitNow(int $code) {
+		exit($code);
 	}
 }

@@ -57,7 +57,7 @@ class New_Branch_Action extends Action_Extender
 
 		if ($result_code !== 0) {
 			$this->Printer->error("There was an error running: " . $hook);
-			exit(1);
+			$this->exitNow(1);
 		}
 	}
 }

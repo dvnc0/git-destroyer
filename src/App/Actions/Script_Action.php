@@ -28,12 +28,25 @@ class Script_Action extends Action_Extender
 		$cmd                    = $scripts[$script_name];
 		[$result, $result_code] = $this->execWrapper($cmd);
 
-		print(implode("\n", $result) . "\n");
+		$this->printArrayToConsole($result);
 
 		if ($result_code !== 0) {
 			throw new Exception("There was an error running script $script_name");
 		}
 		$this->Printer->success("Script $script_name ran successfully");
 		return new Request_Response(TRUE, "Script $script_name ran successfully");
+	}
+
+	/**
+	 * Print to console
+	 *
+	 * @param array $array array to print out
+	 * @return void
+	 * @codeCoverageIgnore
+	 */
+	protected function printArrayToConsole(array $array): void {
+		foreach ($array as $line) {
+			$this->Printer->message($line);
+		}
 	}
 }
