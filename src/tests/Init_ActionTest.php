@@ -163,9 +163,14 @@ class Init_ActionTest extends Unit_Test_Helper {
 		
 		$Mock_Request = $this->getMockBuilder(Request::class)
 			->disableOriginalConstructor()
+			->onlyMethods(['getArgument'])
 			->getMock();
-
-
+		
+		$Mock_Request->expects($this->once())
+			->method('getArgument')
+			->with('config-only')
+			->willReturn(FALSE);
+		
 		$Mock_Init_Action->setPrinter($Mock_Printer);
 		$result = $Mock_Init_Action->execute($Mock_Request);
 
@@ -295,7 +300,124 @@ class Init_ActionTest extends Unit_Test_Helper {
 		
 		$Mock_Request = $this->getMockBuilder(Request::class)
 			->disableOriginalConstructor()
+			->onlyMethods(['getArgument'])
 			->getMock();
+		
+		$Mock_Request->expects($this->once())
+			->method('getArgument')
+			->with('config-only')
+			->willReturn(FALSE);
+
+
+		$Mock_Init_Action->setPrinter($Mock_Printer);
+		$result = $Mock_Init_Action->execute($Mock_Request);
+
+		$this->assertTrue($result->success);
+		$this->assertInstanceOf(Request_Response::class, $result);
+	}
+
+	public function testHookFileNotBuiltIfConfigOnlyFlagSet(){
+		$Mock_Application = $this->getMockApplication();
+		$Mock_Input = $this->getMockBuilder(Input::class)
+			->disableOriginalConstructor()
+			->onlyMethods(['get', 'list'])
+			->getMock();
+
+		$Mock_Input->expects($this->exactly(4))
+			->method('get')
+			->with(
+				...$this->withConsecutiveArgs(
+					['What is your git username?'],
+					['What is the email you use for git?'],
+					['What is the repository clone URL? ex: ssh://user@github.com/user/foo'],
+					['What branch should new branches be made from?'],
+				)
+			)
+			->will(
+				$this->onConsecutiveCalls(
+					'dvnc0',
+					'email@email.com',
+					'repo/clone/url',
+					'master',
+				)
+			);
+		
+		$Mock_Input->expects($this->exactly(3))
+			->method('list')
+			->with(
+				...$this->withConsecutiveArgs(
+					['Does your repository have a staging or testing branch?', ['Yes', 'No']],
+					['Does your repository have a live or production branch?', ['Yes', 'No']],
+					['Do you use branch prefixes? ex ABC-[TICKET NUMBER]', ['Yes', 'No']],
+				)
+			)
+			->will(
+				$this->onConsecutiveCalls(
+					['No'],
+					['No'],
+					['No']
+				)
+			);
+
+		$Mock_Printer = $this->getMockBuilder(Printer::class)
+			->disableOriginalConstructor()
+			->onlyMethods(['success'])
+			->getMock();
+
+		$Mock_Printer->expects($this->exactly(1))
+			->method('success')
+			->with(
+				...$this->withConsecutiveArgs(
+					['Creating config file...'],
+				)
+			);
+
+		$Mock_Application->Printer = $Mock_Printer;
+		
+		$Mock_Init_Action = $this->getMockBuilder(Init_Action::class)
+			->disableOriginalConstructor()
+			->onlyMethods(['filePutContents', 'checkForConfig', 'getInputInstance'])
+			->getMock();
+
+		$Mock_Init_Action->method('checkForConfig')
+			->willReturnCallback(function(){return;});
+
+		$Mock_Init_Action->Input = $Mock_Input;
+
+		$config = json_encode(
+			[
+				'user_name' => 'dvnc0',
+				'email' => 'email@email.com',
+				'repo_url' => 'repo/clone/url',
+				'has_staging' => false,
+				'has_live' => false,
+				'staging' => '',
+				'live' => '',
+				'uses_prefix' => false,
+				'branch_prefix' => '',
+				'new_branch' => 'master',
+			],
+			JSON_PRETTY_PRINT
+		);
+
+		$Mock_Init_Action->expects($this->once())->method('filePutContents')
+			->with(
+				...$this->withConsecutiveArgs(
+					[ROOT . '/git-destroyer-config.json', $config],
+				)
+			)
+			->willReturn(1);
+		
+		
+		$Mock_Request = $this->getMockBuilder(Request::class)
+			->disableOriginalConstructor()
+			->onlyMethods(['getArgument'])
+			->getMock();
+		
+		$Mock_Request->expects($this->once())
+			->method('getArgument')
+			->with('config-only')
+			->willReturn(TRUE);
 
 
 		$Mock_Init_Action->setPrinter($Mock_Printer);

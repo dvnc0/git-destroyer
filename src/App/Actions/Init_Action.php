@@ -4,6 +4,7 @@ namespace Git_Destroyer\Actions;
 use Git_Destroyer\Actions\Action_Extender;
 use Clyde\Request\Request_Response;
 use Clyde\Request\Request;
+use FFI;
 
 class Init_Action extends Action_Extender
 {
@@ -64,10 +65,11 @@ class Init_Action extends Action_Extender
 		$this->Printer->success("Creating config file...");
 		$file_name = ROOT . '/git-destroyer-config.json';
 		$this->filePutContents($file_name, json_encode($config_file, JSON_PRETTY_PRINT));
-
-		$this->Printer->success("Creating hooks file...");
-		$file_name = ROOT . '/git-destroyer-hooks.json';
-		$this->filePutContents($file_name, json_encode($hooks_file, JSON_PRETTY_PRINT));
+		if ($Request->getArgument('config-only') === FALSE) {
+			$this->Printer->success("Creating hooks file...");
+			$file_name = ROOT . '/git-destroyer-hooks.json';
+			$this->filePutContents($file_name, json_encode($hooks_file, JSON_PRETTY_PRINT));
+		}
 		
 		return new Request_Response(TRUE);
 	}
