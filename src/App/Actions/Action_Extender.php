@@ -11,6 +11,7 @@ use Clyde\Application;
 use Clyde\Core\Event_Dispatcher;
 use Clyde\Tasks\Task_Runner;
 use Exception;
+use Clyde\Tools\Printer;
 
 /**
  * @phpstan-import-type ConfigType from \Git_Destroyer\Utils\Config
@@ -25,7 +26,7 @@ abstract class Action_Extender extends Action_Base
 	/**
 	 * @var Input
 	 */
-	protected Input $Input;
+	public Input $Input;
 
 	/**
 	 * @var Git
@@ -45,7 +46,17 @@ abstract class Action_Extender extends Action_Base
 		$this->Git    = $this->getGitInstance();
 		$this->Input  = $this->getInputInstance();
 
-		$this->checkForConfig();
+		//$this->checkForConfig();
+	}
+
+	/**
+	 * Set the printer
+	 *
+	 * @param Printer $Printer Printer
+	 * @return void
+	 */
+	public function setPrinter(Printer $Printer): void {
+		$this->Printer = $Printer;
 	}
 
 	/**
