@@ -1,0 +1,21 @@
+{
+    "new_branch": {
+        "pre": [],
+        "post": []
+    },
+    "commit": {
+        "pre": ["composer stan", "composer phpcs"],
+        "post": []
+    },
+    "staging": {
+        "pre": [],
+        "post": []
+    },
+    "live": {
+        "pre": [],
+        "post": []
+    },
+    "scripts": {
+        "example": "echo \"hello world\""
+    }
+}
