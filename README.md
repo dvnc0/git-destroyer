@@ -1,5 +1,8 @@
 A CLI Git Repository manager.
 
+***FYI:***
+***This is still a work in progress, unit testing, static analysis etc are not complete and this brief guide may change.***
+
 ## Usage
 Download the Git Destroyer codebase or use Composer `composer create-project danc0/git-destroyer` and create an alias to `src/git-destroyer`. This will allow you to use this file in the CLI with an alias instead of having to type `php [PATH TO INSTALL]/src/git-destroyer`. Examples going forward will assume an alias of `git-destroyer` is set up.
 
