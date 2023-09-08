@@ -210,11 +210,50 @@ class Git
 	 * @return bool
 	 */
 	public function cloneRepo(string $repo_url, string $path = '.'): bool {
-		$cmd                    = "git clone $repo_url $path";
+		$config = $this->Config->loadConfigFromFile(ROOT . '/' . Config::CONFIG_NAME);
+
+		$main_branch = $config['new_branch'];
+
+		$cmd = "git init $path 2>&1";
 		[$result, $result_code] = $this->execWrapper($cmd);
 
 		if ($result_code !== 0) {
-			throw new Exception("There was an error cloning the repo");
+			throw new Exception("There was an error initializing the repo");
+		}
+
+		$cmd = "git remote add origin $repo_url 2>&1";
+		[$result, $result_code] = $this->execWrapper($cmd);
+
+		if ($result_code !== 0) {
+			throw new Exception("There was an error adding the remote");
+		}
+
+		$cmd = "git fetch --all 2>&1";
+		[$result, $result_code] = $this->execWrapper($cmd);
+
+		if ($result_code !== 0) {
+			throw new Exception("There was an error fetching the repo");
+		}
+
+		$cmd = "git reset --hard origin/$main_branch 2>&1";
+		[$result, $result_code] = $this->execWrapper($cmd);
+
+		if ($result_code !== 0) {
+			throw new Exception("There was an error resetting the repo");
+		}
+
+		$cmd = "git branch --set-upstream-to=origin/$main_branch $main_branch 2>&1";
+		[$result, $result_code] = $this->execWrapper($cmd);
+
+		if ($result_code !== 0) {
+			throw new Exception("There was an error setting upstream");
+		}
+
+		$cmd = "git checkout $main_branch 2>&1";
+		[$result, $result_code] = $this->execWrapper($cmd);	
+
+		if ($result_code !== 0) {
+			throw new Exception("There was an error checking out $main_branch");
 		}
 
 		return TRUE;
@@ -279,8 +318,11 @@ class Git
 	protected function execWrapper($cmd): array {
 		$result      = [];
 		$result_code = 0;
-		
+
+		// exec and make sure no output is sent to the screen
 		exec($cmd, $result, $result_code);
+
+
 
 		return [$result, $result_code];
 	}
